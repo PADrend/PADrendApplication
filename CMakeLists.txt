@@ -2,7 +2,7 @@
 # This file is part of the open source part of the
 # Platform for Algorithm Development and Rendering (PADrend).
 # Web page: http://www.padrend.de/
-# Copyright (C) 2009-2013 Benjamin Eikel <benjamin@eikel.org>
+# Copyright (C) 2012-2013 Benjamin Eikel <benjamin@eikel.org>
 # 
 # PADrend consists of an open source part and a proprietary part.
 # The open source part of PADrend is subject to the terms of the Mozilla
@@ -12,7 +12,9 @@
 #
 cmake_minimum_required(VERSION 2.8.11)
 
-project(PADrendSingle)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/resources/CMake)
+
+project(PADrend CXX)
 
 set(PADREND_VERSION_MAJOR 0)
 set(PADREND_VERSION_MINOR 7)
@@ -26,103 +28,128 @@ if(WIN32)
 	set(PADREND_RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/Resource.rc")
 endif()
 
-add_subdirectory(src)
+add_executable(PADrend
+	PADrendMain.cpp
+	${PADREND_RESOURCE_FILES}
+)
 
 if(WIN32)
 	set_property(TARGET PADrend APPEND PROPERTY INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/resources/Windows")
 endif()
 
+# Dependency to EScript
+if(TARGET EScript)
+	set(ESCRIPT_INCLUDE_DIRS ${EScript_SOURCE_DIR})
+	set(ESCRIPT_LIBRARIES EScript)
+else()
+	find_package(EScript 0.6.4 REQUIRED NO_MODULE)
+	if(NOT ESCRIPT_LIBRARIES)
+		set(ESCRIPT_LIBRARIES EScript)
+	endif()
+endif()
+if(ESCRIPT_INCLUDE_DIRS)
+	target_include_directories(PADrend PRIVATE ${ESCRIPT_INCLUDE_DIRS})
+endif()
+target_link_libraries(PADrend LINK_PUBLIC ${ESCRIPT_LIBRARIES})
+
+# Dependency to E_Geometry
+if(NOT TARGET E_Geometry)
+	find_package(E_Geometry 0.1.2 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC E_Geometry)
+
+# Dependency to E_GUI
+if(NOT TARGET E_GUI)
+	find_package(E_GUI 0.1.2 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC E_GUI)
+
+# Dependency to E_MinSG
+if(NOT TARGET E_MinSG)
+	find_package(E_MinSG 0.1.4 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC E_MinSG)
+
+# Dependency to E_Rendering
+if(NOT TARGET E_Rendering)
+	find_package(E_Rendering 0.1.3 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC E_Rendering)
+
+# Dependency to E_Util
+if(NOT TARGET E_Util)
+	find_package(E_Util 0.1.2 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC E_Util)
+
+# Dependency to Geometry
+if(NOT TARGET Geometry)
+	find_package(Geometry 0.1.2 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC Geometry)
+
+# Dependency to GUI
+if(NOT TARGET GUI)
+	find_package(GUI 0.1.2 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC GUI)
+
+# Dependency to MinSG
+if(NOT TARGET MinSG)
+	find_package(MinSG 0.1.4 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC MinSG)
+
+# Dependency to Rendering
+if(NOT TARGET Rendering)
+	find_package(Rendering 0.1.3 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC Rendering)
+
+# Dependency to Util
+if(NOT TARGET Util)
+	find_package(Util 0.1.3 REQUIRED NO_MODULE)
+endif()
+target_link_libraries(PADrend LINK_PUBLIC Util)
+
+# Optional dependency to Sound and E_Sound
+if(NOT TARGET Sound)
+	find_package(Sound 0.1.2 QUIET NO_MODULE)
+endif()
+if(NOT TARGET E_Sound)
+	find_package(E_Sound 0.1.2 QUIET NO_MODULE)
+endif()
+if(TARGET Sound AND TARGET E_Sound)
+	target_compile_definitions(PADrend PUBLIC PADREND_HAVE_LIB_E_SOUND)
+	target_link_libraries(PADrend LINK_PUBLIC Sound E_Sound)
+endif()
+
+if(APPLE)
+	# Dependency to SDL2
+	find_package(SDL2 2.0.0 REQUIRED)
+	target_include_directories(PADrend PRIVATE ${SDL2_INCLUDE_DIRS})
+	target_link_libraries(PADrend LINK_PRIVATE ${SDL2_LIBRARIES})
+endif()
+
+install(TARGETS PADrend
+	RUNTIME DESTINATION bin COMPONENT applications
+	LIBRARY DESTINATION lib COMPONENT applications
+	ARCHIVE DESTINATION lib COMPONENT applications
+)
 install(DIRECTORY resources
 	DESTINATION bin COMPONENT resources
 	PATTERN ".svn" EXCLUDE
 )
 
-# Packaging
-set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP ON)
-include(InstallRequiredSystemLibraries)
-if(WIN32)
-	install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin COMPONENT runtimelibraries)
-	# Search the "libgcc_s_sjlj-1.dll" file
-	execute_process(
-		COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libgcc_s_sjlj-1.dll
-		OUTPUT_VARIABLE GCC_S_SJLJ_LIBRARY
-		OUTPUT_STRIP_TRAILING_WHITESPACE
-	)
-	if(EXISTS ${GCC_S_SJLJ_LIBRARY})
-		install(FILES ${GCC_S_SJLJ_LIBRARY} DESTINATION bin COMPONENT runtimelibraries)
-	endif()
-	# Search the "libstdc++-6.dll" file
-	execute_process(
-		COMMAND ${CMAKE_CXX_COMPILER} -print-file-name=libstdc++-6.dll
-		OUTPUT_VARIABLE STDCPP_LIBRARY
-		OUTPUT_STRIP_TRAILING_WHITESPACE
-	)
-	if(EXISTS ${STDCPP_LIBRARY})
-		install(FILES ${STDCPP_LIBRARY} DESTINATION bin COMPONENT runtimelibraries)
-	endif()
+include(CheckCXXCompilerFlag)
+CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(COMPILER_SUPPORTS_CXX11)
+	set_property(TARGET PADrend APPEND_STRING PROPERTY COMPILE_FLAGS "-std=c++11 ")
+elseif(COMPILER_SUPPORTS_CXX0X)
+	set_property(TARGET PADrend APPEND_STRING PROPERTY COMPILE_FLAGS "-std=c++0x ")
 else()
-	install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION lib COMPONENT runtimelibraries)
+	message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-set(CPACK_PACKAGE_NAME "PADrend")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PADREND_DESCRIPTION})
-set(CPACK_PACKAGE_VENDOR ${PADREND_AUTHORS})
-set(CPACK_PACKAGE_CONTACT "Benjamin Eikel <benjamin@eikel.org>")
-set(CPACK_PACKAGE_VERSION_MAJOR ${PADREND_VERSION_MAJOR})
-set(CPACK_PACKAGE_VERSION_MINOR ${PADREND_VERSION_MINOR})
-set(CPACK_PACKAGE_VERSION_PATCH ${PADREND_VERSION_PATCH})
-set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/NSIS_windows/Notice.txt")
-
-set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "http://www.padrend.de/")
-
-set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/NSIS_windows/PADrendIcon.ico")
-set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/NSIS_windows/PADrendIcon.ico")
-set(CPACK_NSIS_INSTALLED_ICON_NAME "bin/PADrend.exe")
-set(CPACK_NSIS_URL_INFO_ABOUT "http://www.padrend.de/")
-set(CPACK_NSIS_MODIFY_PATH ON)
-set(CPACK_PACKAGE_INSTALL_REGISTRY_KEY ${CPACK_PACKAGE_NAME})
-
-if(APPLE)
-	set(CPACK_BUNDLE_NAME            "PADrend")
-	set(CPACK_BUNDLE_ICON            "${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/Bundle_OSX/PADrendIcon.icns")
-	set(CPACK_BUNDLE_PLIST           "${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/Bundle_OSX/Info.plist")
-	set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/Bundle_OSX/start_padrend.sh")
-endif()
-
-set(CPACK_CREATE_DESKTOP_LINKS PADrend)
-set(CPACK_PACKAGE_EXECUTABLES "PADrend" "PADrend")
-
-set(CPACK_STRIP_FILES ON)
-
-set(CPACK_COMPONENTS_ALL applications developmentlibraries extplugins headers plugins resources runtimelibraries sources)
-set(CPACK_COMPONENT_APPLICATIONS_DISPLAY_NAME "Applications")
-set(CPACK_COMPONENT_APPLICATIONS_DEPENDS runtimelibraries plugins resources)
-set(CPACK_COMPONENT_APPLICATIONS_GROUP "Runtime")
-set(CPACK_COMPONENT_DEVELOPMENTLIBRARIES_DISPLAY_NAME "Development Libraries")
-set(CPACK_COMPONENT_DEVELOPMENTLIBRARIES_DEPENDS headers)
-set(CPACK_COMPONENT_DEVELOPMENTLIBRARIES_GROUP "Development")
-set(CPACK_COMPONENT_EXTPLUGINS_DISPLAY_NAME "External Plug-ins")
-set(CPACK_COMPONENT_EXTPLUGINS_DEPENDS plugins)
-set(CPACK_COMPONENT_EXTPLUGINS_GROUP "Runtime")
-set(CPACK_COMPONENT_HEADERS_DISPLAY_NAME "C++ header files")
-set(CPACK_COMPONENT_HEADERS_GROUP "Development")
-set(CPACK_COMPONENT_PLUGINS_DISPLAY_NAME "Core Plug-ins")
-set(CPACK_COMPONENT_PLUGINS_GROUP "Runtime")
-set(CPACK_COMPONENT_RESOURCES_DISPLAY_NAME "Resources")
-set(CPACK_COMPONENT_RESOURCES_GROUP "Runtime")
-set(CPACK_COMPONENT_RUNTIMELIBRARIES_DISPLAY_NAME "Runtime Libraries")
-set(CPACK_COMPONENT_RUNTIMELIBRARIES_GROUP "Runtime")
-set(CPACK_COMPONENT_SOURCES_DISPLAY_NAME "Source Files")
-set(CPACK_COMPONENT_SOURCES_GROUP "Development")
-
-set(CPACK_ALL_INSTALL_TYPES User Developer Full)
-set(CPACK_COMPONENT_APPLICATIONS_INSTALL_TYPES User Full)
-set(CPACK_COMPONENT_DEVELOPMENTLIBRARIES_INSTALL_TYPES Developer Full)
-set(CPACK_COMPONENT_EXTPLUGINS_INSTALL_TYPES User Developer Full)
-set(CPACK_COMPONENT_HEADERS_INSTALL_TYPES Developer Full)
-set(CPACK_COMPONENT_PLUGINS_INSTALL_TYPES User Developer Full)
-set(CPACK_COMPONENT_RESOURCES_INSTALL_TYPES User Developer Full)
-set(CPACK_COMPONENT_RUNTIMELIBRARIES_INSTALL_TYPES User Full)
-set(CPACK_COMPONENT_SOURCES_INSTALL_TYPES Developer Full)
-
-include(CPack)
+include(${CMAKE_CURRENT_SOURCE_DIR}/resources/Installer/Packaging.cmake)
