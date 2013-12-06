@@ -1,0 +1,12 @@
+Platform for Algorithm Development and Rendering (PADrend)
+==========================================================
+
+!!!FOR INTERNAL USE ONLY!!!
+
+This installer may contain proprietary parts.
+Redistribution is not allowed.
+
+Copyright (C) 2007-2013 Benjamin Eikel <benjamin@eikel.org>
+Copyright (C) 2007-2013 Claudius Jähn <claudius@uni-paderborn.de>
+Copyright (C) 2007-2013 Ralf Petring <ralf@petring.net>
+http://www.padrend.de/

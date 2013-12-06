@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg"
+ xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+ version="1.1" baseProfile="full"
+ width="1150px" height="500px">
+ <!--Inhalt der Datei -->
+ <defs>
+
+    <marker id="Triangle"
+      viewBox="0 0 10 10" refX="10" refY="5" 
+      markerUnits="userSpaceOnUse"
+      markerWidth="10" markerHeight="7"
+      orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" />
+    </marker>
+    <marker id="Triangle2"
+      viewBox="0 0 10 10" refX="0" refY="5" 
+      markerUnits="userSpaceOnUse"
+      markerWidth="10" markerHeight="7"
+      orient="auto">
+      <path d="M 10 0 L 0 5 L 10 10 z" />
+    </marker>
+    <clipPath id="DataAreaClip">
+		<rect x ="0" y ="0" width ="800" height ="400" />
+	</clipPath>
+  
+  <script type="text/ecmascript">
+   <![CDATA[
+		//var svgNS = "http://www.w3.org/2000/svg";
+	
+		//var WIDTH=800;
+		//var HEIGHT=400;
+
+		//var stdFarben=new Array('red','blue','green','#ff00ff','#008888','#ff8800','#ff0088','#00ff88','#88ff00','#0088ff','#8800ff'
+		//	,'#880000','#008800','#000088');
+		//var dashes=new Array("0","2,2","1,6","6,1,2","4,6","6,4,2","1,1");
+		
+		/**
+		 * (Hilfsfunktion) Rundet value auf precision-viele Stellen
+		 * Bsp. round(1234567.89, 3)=123000
+		 */
+		function round(value,precision){
+			return Number(Number(value).toPrecision(precision));
+		}
+		//alert( round(12345454354323467/7213432453567,2));
+		/**
+		 *  (Hilfsfunktion) Setzt mehrere Attribute eines Objectes gemäß einer Map.
+		 */
+		function setAttributes(targetElement, attribs){
+			if(attribs==null) return targetElement;
+			for(key in attribs){
+				//alert(key+" - "+attribs[key]);
+				targetElement.setAttribute(key,attribs[key]);
+			}
+			return targetElement;
+		}
+		/** 
+		 * (Hilfsfunktion) Erzeugt ein SVG Element.
+		 */ 
+		function createSVGElement(name,attribs){
+			var e=document.createElementNS("http://www.w3.org/2000/svg",name);
+			if(attribs!=null)
+				setAttributes(e,attribs);
+			return e;
+		}
+
+		/** 
+		 * (Hilfsfunktion) Erzeugt einen Textknoten.
+		 */ 
+		function createText(text,x,y,size,align,attribs){
+			var textnode=createSVGElement("text",{"x":x,"y":y,"font-size":size,"text-anchor":align});
+			setAttributes(textnode,attribs);
+			textnode.appendChild(document.createTextNode(text));
+			return textnode;
+		}
+		/**
+		 * (Hilfsfunktion) Erzeugt eine Linie
+		 * SVGLineElement createLinie(x1,y1,x2,y2,[color,[strokeWidth]]);
+		 */
+		function createLine(x1,y1,x2,y2,color,strokeWidth,attribs){
+			var line=createSVGElement("line",
+				{"x1":x1,"y1":y1,"x2":x2,"y2":y2,"fill":"none","stroke":color,"stroke-width":strokeWidth});
+			setAttributes(line,attribs);
+			return line;
+		}
+		/**
+		 * (Hilfsfunktion) Erzeugt ein Rechteck
+		 * SVGRectElement createRect(x,y,width,height,[fill]);
+		 */
+		function createRect(x,y,width,height,fill,attribs){
+			var rect=createSVGElement("rect",
+				{"x":x,"y":y,"width":width,"height":height,"fill":fill});
+			setAttributes(rect,attribs);
+			return rect;
+		}
+		/**
+		 * (Hilfsfunktion) Erzeugt einen Kreis
+		 * SVGCircleElement createCircle(x,y,width,height,[fill]);
+		 */
+		function createCircle(x,y,r,fill,attribs){
+			var c=createSVGElement("circle",
+				{"cx":x,"cy":y,"r":r,"fill":fill});
+			setAttributes(c,attribs);
+			return c;
+		}
+		/**
+		 * (Hilfsfunktion) Erzeugt eine Mehrsegmentige Linie
+		 * SVGPolyLioneElement createPolyline(points);
+		 */
+		function createPolyline(points,attribs){
+			var line=createSVGElement("polyline",
+				{"points":points,"fill":"none"});
+			setAttributes(line,attribs);
+			return line;
+
+		}
+		
+		// ------------------------------------------------------------------------ //
+		/**
+		 * [ctor] Scale
+		 */
+		var Scale=function(name,posBegin,posEnd,min,max){
+			this.name=name;
+			this.posBegin=posBegin;
+			this.posEnd=posEnd;
+			this.min=min;
+			this.max=max;
+			this.posOffset=0;
+			this.scale=0;
+			this.zoom=1*1;
+			this.recalculate();
+		};
+		Scale.prototype.toString=function (){
+			return "Scale: "+this.min+" -- "+this.max+this.name+" | "+this.posBegin+" -- "+this.posEnd+" pixel";
+		};
+		Scale.prototype.addToRange=function(value){
+			if(this.min==null||value<this.min)this.min=value;
+			if(this.max==null||value>this.max)this.max=value;
+			this.recalculate();
+		};
+		Scale.prototype.recalculate=function(){
+			if(this.max==this.min){
+				this.scale=0;
+			}else{
+				this.scale=(this.posEnd-this.posBegin)*0.95/(this.max-this.min);
+			}
+		};
+		Scale.prototype.getPos=function(value){
+			return this.posOffset+((this.scale*(value-this.min))*this.zoom+this.posBegin);
+		};
+		Scale.prototype.setPosOffset=function(posOffset){
+			this.posOffset=posOffset;
+		};
+		Scale.prototype.getValue=function(pos){
+			pos-=posOffset;
+			return ((pos-this.posBegin)/this.scale)/this.zoom;
+		};
+		Scale.prototype.createAxis=function(direction,markerDistance,numberEvery,description, maxDia, straightLines){
+			var axis=createSVGElement("g");
+			var max=this.max;
+			var min=this.min;
+			var x1=0,y1=0,x2=0,y2=0;
+			if(markerDistance==null) {
+				var d=(max-min)/this.zoom;
+				if(d < 1 )markerDistance=0.05;
+				else if(d < 10 )markerDistance=0.25;
+				else if(d < 50 )markerDistance=0.5;
+				else if(d < 100 )markerDistance=1;
+				else {
+					markerDistance=round((d)/20.0,1);
+					if(markerDistance<0.01) markerDistance=0.01;
+				}
+			}
+			if(numberEvery==null) 
+				numberEvery=4;
+
+			if(description==null)
+				description=this.name;
+				
+			if(direction=='x'){
+				x1=this.posBegin;
+				x2=this.posEnd;
+				axis.appendChild(createText(description,x2,12,"10px","end"));
+				
+				// Draw the straight lines at x value.
+				var len = straightLines.length;
+				for (var i = 0; i < len; i++) {
+					var xLine = straightLines[i];
+					var realX = this.getPos(xLine);
+					if(realX >= 0 && realX <= this.posEnd) {
+						axis.appendChild(createLine(realX, 0, realX, -maxDia, "#969696","1px"));
+					}
+				}
+			}else if(direction=='y'){
+				y1=this.posBegin;
+				y2=this.posEnd;
+				axis.appendChild(createText(description,-10,y2+10,"10px","end"));
+				
+				// Draw the straight lines at y value.
+				var len = straightLines.length;
+				for (var i = 0; i < len; i++) {
+					var yLine = straightLines[i];
+					var realY = this.getPos(yLine);
+					if(realY >= 0 && realY <= this.posBegin) {
+						axis.appendChild(createLine(0, realY, maxDia, realY, "#969696","1px"));
+					}
+				}
+			}else alert("createAxis Error #1");
+			
+			
+			var line=createLine(x1,y1,x2,y2,"black","1px",{"marker-end":"url(#Triangle)"});
+			axis.appendChild(line);
+			
+			if(markerDistance==0) return axis;
+			var markerSegments=Array();
+			if(min<0 && max>0){
+				markerSegments.push([0.0,max,1]);
+				markerSegments.push([0.0,-min,-1]);
+			}else if(this.max==0){
+				markerSegments.push([0.0,-min,-1]);
+			}else{
+				markerSegments.push([min,max,1]);
+			}
+			while(markerSegments.length>0){
+				var s=markerSegments.pop();
+				var i=0;
+				for(var v=s[0];v<=s[1];v+=markerDistance){
+					var marker;
+					var v2=round(s[2]*v,2);
+					var pos=this.getPos(v2);
+
+					if(s[2]<0){ //negativer Achsenabschnitt
+						if(	(this.posBegin<this.posEnd && pos<this.posBegin) ||
+							(this.posBegin>this.posEnd && pos>this.posBegin)) 
+							break;
+						else if((this.posBegin<this.posEnd && pos>this.posEnd) ||
+								(this.posBegin>this.posEnd && pos<this.posEnd)) 
+							continue;							
+					}else{ //positiver Achsenabschnitt
+						if(	(this.posBegin<this.posEnd && pos>this.posEnd) ||
+							(this.posBegin>this.posEnd && pos<this.posEnd)) 
+							break;
+						else if((this.posBegin<this.posEnd && pos<this.posBegin) ||
+								(this.posBegin>this.posEnd && pos>this.posBegin)) 
+							continue;							
+					}
+					
+					var size=2;
+					if( (i %numberEvery) ==0){
+						size*=2;
+					}
+					if(direction=='x')
+						a=[pos,-size,pos,size,  pos,size+8,"middle"];
+					else // y
+						a=[-size,pos,size,pos,  size-10,pos+3,"end"];
+				
+					if( (i %numberEvery) ==0){
+						var t=""+v2;
+						if(v2>=1000000) t=""+(v2/1000000)+"M";
+						else if(v2>=1000) t=""+(v2/1000)+"k";
+						axis.appendChild(createText(t,a[4],a[5],"10px",a[6]));
+					}
+
+					axis.appendChild(createLine(a[0],a[1],a[2],a[3],"black","1px"));
+					i++;
+				}
+			}
+			return axis;
+		};
+		
+		//var scale1=new Scale("mm",0,500,-0.3,0.59);
+		//scale1.addToRange(10);
+		//alert(scale1.toString()+" - "+scale1.getPos(1));
+
+		// ------------------------------------------------------------------------ //
+		/**
+		 * [ctor] Diagram
+		 */
+		var Diagram=function(width,height,attribs){
+			this.id=Diagram._nr;
+			Diagram._nr++;
+			Diagram._instances.push(this);
+			this.svgDiagramRoot=0;
+			this.dataArea=0;
+			this.clippingArea=0;
+			this.axisArea=0;
+			
+			this.width=width;
+			this.height=height;
+			
+			this.dragXPos=0;
+			this.dragYPos=0;
+			this.dragXBegin=0;
+			this.dragYBegin=0;
+			this.dragging=false;
+			
+			this.xScales=new Object();
+			this.xScalesCounter=0;
+			this.yScales=new Object();
+			this.yScalesCounter=0;
+			this.dataRows=[];
+			this.straightLinesX = new Array();
+			this.straightLinesY = new Array();
+			if(attribs==null)
+				this.attribs={};
+			else
+				this.attribs=attribs;
+		};
+		Diagram._nr=0;
+		Diagram._instances=[];
+		/**
+		 *
+		 */
+		Diagram.prototype.addDataRow=function(dataRow){
+			this.dataRows.push(dataRow);
+			if(dataRow.attributes.color==null)
+				dataRow.attributes.color="red"; // TODO!!!
+			xScale=this.xScales[dataRow.xMetric];
+			// Only one instance of each axis.
+			if(xScale==null){
+				xScale=new Scale(dataRow.xMetric,0,this.width,0,0);
+				this.xScales[dataRow.xMetric]=xScale;
+				this.xScalesCounter++;
+			}
+			yScale=this.yScales[dataRow.yMetric];
+			if(yScale==null){
+				yScale=new Scale(dataRow.yMetric,this.height,0,0,0);
+				this.yScales[dataRow.yMetric]=yScale;
+				this.yScalesCounter++;
+			}
+			for(var i=0;i<dataRow.xValues.length;i++){
+				xScale.addToRange(dataRow.xValues[i]);
+				yScale.addToRange(dataRow.yValues[i]);
+			}
+		};
+		/**
+		 *
+		 */	
+		Diagram.prototype.addStraightLine=function(orientation, value){
+			if(orientation == "x") {
+				this.straightLinesX.push(value);
+			} else {
+				this.straightLinesY.push(value);
+			}
+		};
+		/**
+		 * Erzeugt die SVG-Objekte des Diagramms
+		 */
+		Diagram.prototype.createSVG=function (){
+			var d=createSVGElement("g",{"id":this.id});
+			this.clippingArea=createSVGElement("g",
+				{"id":"clippingArea:"+this.id,
+				"clip-path":"url(#DataAreaClip)"});
+			this.dataArea=createSVGElement("g",
+				{"id":"dataArea:"+this.id,
+				"transform":"translate("+this.dragXPos+","+this.dragYPos+")"
+				//"title":".."
+				});
+			// TODO: Set ClipArea Size
+			
+			// background
+			d.appendChild(createRect(0,0,this.width,this.height,"#F8F8F8",
+				{"onmousedown":"Diagram._dragBegin(evt,\""+this.id+"\")",
+				"onmouseup":"Diagram._dragEnd(evt,\""+this.id+"\")",
+				"onmouseout":"Diagram._dragEnd(evt,\""+this.id+"\")",
+				"onmousemove":"Diagram._drag(evt,\""+this.id+"\")"}
+			
+			
+			));
+
+			d.appendChild(this.clippingArea);
+			this.clippingArea.appendChild(this.dataArea);
+			
+			this.svgDiagramRoot=d;
+
+			this.axisArea=this.createAxis();;
+			this.svgDiagramRoot.appendChild(this.axisArea);
+
+		//	this.dataArea.appendChild(createRect(-1000,-1000,5*this.width,5*this.height,"#F8F8F8"));
+
+
+			//legend
+			var height=this.dataRows.length*25;
+			var legend=createSVGElement("g",
+				{"transform":"translate("+(this.width+10)+","+((this.height-height)/2)+")"});
+			var yPos=5;
+			var maxLen=0;
+			for(var i=0;i<this.dataRows.length;i++){
+				var dr=this.dataRows[i];
+				legend.appendChild(createCircle(8,yPos+8,3,"none",{"stroke":dr.attributes.color,"id":"#Circle-"+i}));
+				legend.appendChild(createText(dr.description,15,yPos+12,"14px","start",
+					{"onclick":"DataRow._toggleHide(evt,"+i+")","cursor":"pointer"}));
+				if(dr.description.length>maxLen) maxLen=dr.description.length;
+				yPos+=20;
+			}
+			legend.insertBefore(createRect(0,0,maxLen*8+15,height,"#F8F8F8"),legend.firstChild);
+			d.appendChild(legend);
+			
+			// data
+			for(var i=0;i<this.dataRows.length;i++){
+				var dr=this.dataRows[i];
+				this.xScales[dr.xMetric].setPosOffset(0);
+				this.yScales[dr.yMetric].setPosOffset(0);
+				this.dataArea.appendChild(dr.createSVG(this.xScales[dr.xMetric],this.yScales[dr.yMetric]));
+				this.xScales[dr.xMetric].setPosOffset(this.dragXPos);
+				this.yScales[dr.yMetric].setPosOffset(this.dragYPos);
+			}
+			
+			// Buttons
+			var i=0;
+			for(key in this.xScales){
+				var scale=this.xScales[key];
+				var zoomButton=createText("Zoom X:"+scale.name+" ("+scale.zoom+"x)",
+					this.width+10,this.height+i*15,
+				"10pt","start",
+				{"onclick":"Diagram._zoomClick(evt,\""+this.id+"\",\"x\",\""+key+"\")",
+				"cursor":"pointer","fill":"#bbbbbb","title":"click(+[strg]) to zoom in(out)"});
+				d.appendChild(zoomButton);
+				i++;
+			}
+			for(key in this.yScales){
+				var scale=this.yScales[key];
+				var zoomButton=createText("Zoom Y:"+scale.name+"( "+scale.zoom+"x)",
+					this.width+10,this.height+i*15,
+				"10pt","start",
+				{"onclick":"Diagram._zoomClick(evt,\""+this.id+"\",\"y\",\""+key+"\")",
+				"cursor":"pointer","fill":"#bbbbbb","title":"click(+[strg]) to zoom in(out)"});
+				d.appendChild(zoomButton);
+				i++;
+			}
+	
+
+			return d;
+		};
+
+		/** 
+		 * Erzeuge Achsen
+		 */
+		Diagram.prototype.createAxis=function(){
+			var g=createSVGElement("g",{});	
+			
+			var xScale=null;
+			for(key in this.xScales){
+				xScale=this.xScales[key];
+				//xScale.zoom=this.zoom;
+			}
+			var yScale=null;
+			for(key in this.yScales){
+				yScale=this.yScales[key];
+				//yScale.zoom=this.zoom;
+			}
+			if(!xScale || !yScale) return g;
+				
+			//if(xScale==null||yScale==null) return d;
+			var xDisplacement=0,yDisplacement=0;
+			var xAxis=null,yAxis=null;
+
+			xScale.setPosOffset(this.dragXPos);
+			//xScale.recalculate();
+			if(this.xScalesCounter==1){
+				xDisplacement=xScale.getPos(0);
+				if(xDisplacement<0) 
+					xDisplacement=0;
+				else if(xDisplacement>this.width) 
+					xDisplacement=this.width;
+				xAxis=xScale.createAxis("x", null, null, null, this.height, this.straightLinesX);				
+			}else {
+				xAxis=xScale.createAxis("x",0,0,"", this.height, this.straightLinesX);
+			}			
+
+			yScale.setPosOffset(this.dragYPos);
+			if(this.yScalesCounter==1){
+				yDisplacement=yScale.getPos(0);
+				if(yDisplacement<0) 
+					yDisplacement=0;
+				else if(yDisplacement>this.height) 
+					yDisplacement=this.height;
+				yAxis=yScale.createAxis("y", null, null, null, this.width, this.straightLinesY);
+			}
+			else {
+				yAxis=yScale.createAxis("y",0,0,"", this.width, this.straightLinesY);
+			}
+
+			yAxis.setAttribute("transform","translate("+xDisplacement+",0)");
+			g.appendChild(yAxis);
+			xAxis.setAttribute("transform","translate(0,"+yDisplacement+")");
+			g.appendChild(xAxis);
+			return g;
+
+		};
+		/**
+		 *
+		 */
+		Diagram.prototype.updateSVG=function(){
+			var x=this.dragXPos;
+			var y=this.dragYPos;
+			this.dataArea.setAttribute(
+				"transform",
+				"translate("+x+","+y+") ");
+			if(this.axisArea!=0){
+				this.axisArea.parentNode.removeChild(this.axisArea);
+			}
+			this.axisArea=this.createAxis();;
+			this.svgDiagramRoot.appendChild(this.axisArea);
+		}
+		Diagram._zoomClick=function (evt,id,direction,key){
+			var diagram=Diagram._instances[id];
+		
+			var scale= (direction=="x"?diagram.xScales[key]:diagram.yScales[key]);
+			if(evt.ctrlKey|evt.shiftKey)
+				scale.zoom/=2;
+			else 
+				scale.zoom*=2;
+
+			var svg=diagram.svgDiagramRoot;
+			var rootSVG=svg.parentNode;
+			rootSVG.removeChild(svg);
+			rootSVG.appendChild(diagram.createSVG());
+			diagram.updateSVG();
+		}
+		
+		Diagram._dragBegin=function (evt,id){
+			if(! (evt.button==1 || (evt.button==0 && evt.ctrlKey ))) return; // nur Rechtsklick
+			var diagram=Diagram._instances[id];
+			diagram.dragging=true;
+			diagram.dragXBegin=evt.clientX;
+			diagram.dragYBegin=evt.screenY;
+		}
+		Diagram._dragEnd=function (evt,id){
+			var diagram=Diagram._instances[id];
+			if(!diagram.dragging) return;
+			diagram.dragging=false;
+			diagram.updateSVG();
+		}
+		
+		Diagram._drag=function (evt,id){
+			var diagram=Diagram._instances[id];
+			if(!diagram.dragging) 
+				return;
+		
+			diagram.dragXPos-=diagram.dragXBegin-evt.clientX;
+			diagram.dragYPos-=diagram.dragYBegin-evt.screenY;
+			diagram.dragXBegin=evt.clientX;
+			diagram.dragYBegin=evt.screenY;
+			diagram.updateSVG();
+
+		}
+		// ------------------------------------------------------------------------ //
+		var DataRow=function(description,xMetric,yMetric,xValues,yValues,attributes){
+			if(DataRow.instances==null)
+				DataRow.instances=Array();
+			this.nr=DataRow.instances.length;
+			DataRow.instances.push(this);
+
+			this.description=description;
+			this.xMetric=xMetric;
+			this.yMetric=yMetric;
+			this.xValues=xValues;
+			this.yValues=yValues;
+			if(attributes==null) attributes=new Object();
+			this.attributes=attributes;
+		};
+		DataRow.prototype.createSVG=function (xScale,yScale){
+			var g=createSVGElement("g",
+				{"stroke":this.attributes.color,"stroke-width":"1px","id":"#Row-"+this.nr});
+			var points="";
+
+			//var outOfSight=0;
+			for(var i=0;i<this.xValues.length;i++){
+				var x=xScale.getPos(this.xValues[i]);
+				var y=yScale.getPos(this.yValues[i]);
+			/*	if(x>xScale.posEnd || y<0){
+					if(++outOfSight>1)
+						continue;
+				}*/
+			//	else outOfSight=0;
+				var point=createCircle(x,y,1,"none",{"cursor":"pointer",
+					"onclick":"DataRow._onClick(evt,"+this.nr+","+i+")"});
+				g.appendChild(point);
+				points+=x+" "+y+" ";
+			}
+			if(this.attributes.noLine!=true){
+				var line=createPolyline(points);
+				if(this.attributes.dash){
+					line.setAttribute("stroke-dasharray",this.attributes.dash);
+					
+				}
+				g.insertBefore(line,g.firstChild);
+			}
+			return g;
+		};
+		/**
+		 *  Zeigt die Werte zu einem Datenpunkt an oder entfernt sie wieder.
+		 */ 
+		DataRow._onClick=function(evt,rowNr,pointNr){
+			var elem=evt.target;
+			var row=DataRow.instances[rowNr];
+			row.onClick(elem,pointNr);
+		}
+		DataRow.prototype.onClick=function (elem,pointNr){
+			var infoId="#Info-"+this.nr+"-"+pointNr;
+			var infoElement=document.getElementById(infoId);
+			if(infoElement!=null){
+				infoElement.parentNode.removeChild(infoElement);
+			}else{
+				var rand= Math.round(25.0+Math.random()*30.0);
+				var text1=this.xValues[pointNr]+' '+this.xMetric;
+				var text2=this.yValues[pointNr]+' '+this.yMetric;
+				var width=(text1.length>text2.length?text1.length:text2.length)*7;
+				
+				if(rand%2==0) rand*=-1;
+				infoElement=createSVGElement("g",
+					{"id":infoId,"stroke-width":"0.1px",
+					"transform":"translate("+(elem.getAttribute("cx")*1)+","+(elem.getAttribute("cy")*1)+")"});
+	
+				infoElement.appendChild(
+					createRect(-width*0.5,-rand,width,22,"#FFFFFF",{"opacity":"0.5"}));
+				infoElement.appendChild(
+					createText(text1,0,-rand+10,"10px","middle",{"stroke":"black"}));
+				infoElement.appendChild(
+					createText(text2,0,-rand+20,"10px","middle",{"stroke":"black"}));
+				infoElement.appendChild(
+					createLine(0,0,0,rand<0?-rand:-rand+13,"10px","middle",{"stroke":"black"}));
+				elem.parentNode.appendChild(infoElement);
+			}
+		};
+		/**
+		 *  Hebt eine Datenreihe hervor oder blendet sie aus.
+		 */ 
+		DataRow._toggleHide=function(evt,rowNr){
+			var row=DataRow.instances[rowNr];
+			elem=document.getElementById("#Row-"+rowNr);
+			circ=document.getElementById("#Circle-"+rowNr);
+			if(elem==null) return;
+			else if(elem.getAttribute("display")=="none"){
+				elem.setAttribute("stroke-width","1px")
+				elem.setAttribute("display",null);
+				circ.setAttribute("stroke-width","1px")
+				circ.setAttribute("display",null);
+			}else if(elem.getAttribute("stroke-width")=="1px"){
+				elem.setAttribute("stroke-width","2px");
+				circ.setAttribute("stroke-width","2px");
+			}else if(elem.getAttribute("stroke-width")=="2px"){
+				elem.setAttribute("display","none");
+				circ.setAttribute("display","none");
+			}
+		}
+
+		// ------------------------------------------------------------------------ //
+
+		/**
+		 * Erzeuge das Diagramm.
+		 */ 
+		 function build(){
+			var root=document.getElementById("diagramm");
+
+			var d=new Diagram(800,400);
+/*
+			var xs=[];
+			var ys=[];
+			var ys2=[];
+			for(var i=-3;i<=3;i+=0.1){
+				xs.push(round(i,3));
+				ys.push(round(i*i*i,3));
+				ys2.push(round(i*i,3));
+				
+			}
+			d.addDataRow(new DataRow("Durchschnittliche Länge","%","mm",xs,ys,{"color":"#0000ff","noLine":true}));
+			d.addDataRow(new DataRow("d2","%","mm",xs,ys2));
+*/
+
+			/* TODOs:
+			
+
+			- anders skalierte Achsen (exp, log etc.)
+			- Fehler beseitigen wenn verschiedene Einheiten verwendet werden
+			
+			*/
+// d.addDataRow(new DataRow('Titel','Einheit_X','Einheit_Y',[Data x1,x2,x3,....],[Data y1,y2,y3,....],{'color':'#farbe'}));
+// z.B. : d.addDataRow(new DataRow('Titel','Einheit_X','Einheit_Y',[0,1,2,3,4,5],[0,1,4,9,16,25],{'color':'#ff0000'}));
+
+			// --------------------------------------------------------------
+			// BEGIN DATA: $Data$
+
+			// END DATA.
+			// --------------------------------------------------------------
+			
+			root.appendChild(d.createSVG());
+		 return;
+		}
+		
+     ]]>
+  </script>
+ </defs>
+	<g id="diagramm" transform="translate(30,30) scale(1.0)" onload="build()" />
+</svg>
