@@ -38,19 +38,10 @@ if(WIN32)
 endif()
 
 # Dependency to EScript
-if(TARGET EScript)
-	set(ESCRIPT_INCLUDE_DIRS ${EScript_SOURCE_DIR})
-	set(ESCRIPT_LIBRARIES EScript)
-else()
-	find_package(EScript 0.6.4 REQUIRED NO_MODULE)
-	if(NOT ESCRIPT_LIBRARIES)
-		set(ESCRIPT_LIBRARIES EScript)
-	endif()
+if(NOT TARGET EScript)
+	find_package(EScript 0.6.7 REQUIRED NO_MODULE)
 endif()
-if(ESCRIPT_INCLUDE_DIRS)
-	target_include_directories(PADrend PRIVATE ${ESCRIPT_INCLUDE_DIRS})
-endif()
-target_link_libraries(PADrend LINK_PUBLIC ${ESCRIPT_LIBRARIES})
+target_link_libraries(PADrend LINK_PUBLIC EScript)
 
 # Dependency to E_Geometry
 if(NOT TARGET E_Geometry)
