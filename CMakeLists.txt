@@ -23,6 +23,9 @@ set(PADREND_VERSION ${PADREND_VERSION_MAJOR}.${PADREND_VERSION_MINOR}.${PADREND_
 set(PADREND_DESCRIPTION "Platform for Algorithm Development and Rendering (PADrend)")
 set(PADREND_AUTHORS "Benjamin Eikel; Claudius Jaehn; Ralf Petring")
 
+# Set up install directories
+include(GNUInstallDirs)
+
 if(WIN32)
 	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/resources/Windows/Resource.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/Resource.rc" @ONLY)
 	set(PADREND_RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/Resource.rc")
@@ -122,14 +125,11 @@ if(APPLE)
 	target_link_libraries(PADrend LINK_PRIVATE ${SDL2_LIBRARIES})
 endif()
 
+# Install the application
 install(TARGETS PADrend
-	RUNTIME DESTINATION bin COMPONENT applications
-	LIBRARY DESTINATION lib COMPONENT applications
-	ARCHIVE DESTINATION lib COMPONENT applications
-)
-install(DIRECTORY resources
-	DESTINATION bin COMPONENT resources
-	PATTERN ".svn" EXCLUDE
+	RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT applications
+	LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT applications
+	ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT applications
 )
 
 include(CheckCXXCompilerFlag)
