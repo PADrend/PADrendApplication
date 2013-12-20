@@ -27,13 +27,13 @@ set(PADREND_AUTHORS "Benjamin Eikel; Claudius Jaehn; Ralf Petring")
 include(GNUInstallDirs)
 
 if(WIN32)
-	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/resources/Windows/Resource.rc.in" "${CMAKE_CURRENT_BINARY_DIR}/Resource.rc" @ONLY)
-	set(PADREND_RESOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/Resource.rc")
+	set(PADREND_RESOURCE_FILE "${CMAKE_CURRENT_BINARY_DIR}/Resource.rc")
+	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/resources/Windows/Resource.rc.in" ${PADREND_RESOURCE_FILE} @ONLY)
 endif()
 
 add_executable(PADrend
 	PADrendMain.cpp
-	${PADREND_RESOURCE_FILES}
+	${PADREND_RESOURCE_FILE}
 )
 
 if(WIN32)
