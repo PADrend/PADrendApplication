@@ -48,70 +48,70 @@ target_link_libraries(PADrend LINK_PUBLIC EScript)
 
 # Dependency to E_Geometry
 if(NOT TARGET E_Geometry)
-	find_package(E_Geometry 0.1.2 REQUIRED NO_MODULE)
+	find_package(E_Geometry 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC E_Geometry)
 
 # Dependency to E_GUI
 if(NOT TARGET E_GUI)
-	find_package(E_GUI 0.1.2 REQUIRED NO_MODULE)
+	find_package(E_GUI 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC E_GUI)
 
 # Dependency to E_MinSG
 if(NOT TARGET E_MinSG)
-	find_package(E_MinSG 0.1.4 REQUIRED NO_MODULE)
+	find_package(E_MinSG 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC E_MinSG)
 
 # Dependency to E_Rendering
 if(NOT TARGET E_Rendering)
-	find_package(E_Rendering 0.1.3 REQUIRED NO_MODULE)
+	find_package(E_Rendering 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC E_Rendering)
 
 # Dependency to E_Util
 if(NOT TARGET E_Util)
-	find_package(E_Util 0.1.2 REQUIRED NO_MODULE)
+	find_package(E_Util 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC E_Util)
 
 # Dependency to Geometry
 if(NOT TARGET Geometry)
-	find_package(Geometry 0.1.2 REQUIRED NO_MODULE)
+	find_package(Geometry 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC Geometry)
 
 # Dependency to GUI
 if(NOT TARGET GUI)
-	find_package(GUI 0.1.2 REQUIRED NO_MODULE)
+	find_package(GUI 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC GUI)
 
 # Dependency to MinSG
 if(NOT TARGET MinSG)
-	find_package(MinSG 0.1.4 REQUIRED NO_MODULE)
+	find_package(MinSG 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC MinSG)
 
 # Dependency to Rendering
 if(NOT TARGET Rendering)
-	find_package(Rendering 0.1.3 REQUIRED NO_MODULE)
+	find_package(Rendering 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC Rendering)
 
 # Dependency to Util
 if(NOT TARGET Util)
-	find_package(Util 0.1.3 REQUIRED NO_MODULE)
+	find_package(Util 0.2.0 REQUIRED NO_MODULE)
 endif()
 target_link_libraries(PADrend LINK_PUBLIC Util)
 
 # Optional dependency to Sound and E_Sound
 if(NOT TARGET Sound)
-	find_package(Sound 0.1.2 QUIET NO_MODULE)
+	find_package(Sound 0.2.0 QUIET NO_MODULE)
 endif()
 if(NOT TARGET E_Sound)
-	find_package(E_Sound 0.1.2 QUIET NO_MODULE)
+	find_package(E_Sound 0.2.0 QUIET NO_MODULE)
 endif()
 if(TARGET Sound AND TARGET E_Sound)
 	target_compile_definitions(PADrend PUBLIC PADREND_HAVE_LIB_E_SOUND)
