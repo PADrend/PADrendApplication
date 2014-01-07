@@ -7,6 +7,7 @@
 outln("-"*40);
 outln("EkkiEkkiKateng! (EScript build system)");
 Runtime.setLoggingLevel(Runtime.LOG_PEDANTIC_WARNING);
+
 /*
 \todo 
  - add external library configuration to config
@@ -14,7 +15,7 @@ Runtime.setLoggingLevel(Runtime.LOG_PEDANTIC_WARNING);
  - Minsg extension dependencies (minsg_add_dependencies)
 
 */
-loadOnce("./Std/basics.escript"); // load Std lib
+loadOnce(IO.dirname(args[0])+"/Std/basics.escript"); // load Std lib
 
 static Set = Std.require('Std/Set');
 static Traits = Std.require('Std/Traits/basics');
@@ -446,6 +447,10 @@ var generator = Std.require('EkkiEkkiKateng/CodeBlocksGenerator');
 //generator.createProject( project );
 IO.saveTextFile(folder_base+"/PADrend.cbp", generator.createProject( project ));
 
-return true;
-
 //print_r(project.toDbgString());
+
+// -----------------------------------
+if(getOS()=="WINDOWS")
+	system('pause');
+	
+return true;
