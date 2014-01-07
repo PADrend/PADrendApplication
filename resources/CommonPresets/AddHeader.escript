@@ -97,13 +97,13 @@ w.addAction("Execute",
 
 	var files=IO.dir( rootDir , IO.DIR_FILES|IO.DIR_RECURSIVE );
 	var endings = config.endings.split(",");
-	files.filter( (fn(filename,endings){
+	files.filter( [endings] => fn(endings, filename){
 		foreach(endings as var e){
 			if(filename.endsWith(e))
 				return true;
 		}
 		return false; 
-	}).bindLastParams(endings) );
+	} );
 
 	var lineEnding="\n";
 

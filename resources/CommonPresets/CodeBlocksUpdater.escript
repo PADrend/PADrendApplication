@@ -93,7 +93,7 @@ w.addAction("Go!",fn(){
 	var root = Util.loadXML(projectFile);
 
 	out("Changes:\n");
-	root[Util.XML_CHILDREN].filter(fn(tag,data){
+	root[Util.XML_CHILDREN].filter( [data] => fn(data,tag){
 		var tagName = tag[Util.XML_NAME];
 		// remove 'Units' with invalid files and mark valid files as found.
 		if(tagName == "Unit"){
@@ -108,7 +108,7 @@ w.addAction("Go!",fn(){
 		}
 		// execute recursively on children
 		if(tag[Util.XML_CHILDREN])
-			tag[Util.XML_CHILDREN].filter( thisFn,data );
+			tag[Util.XML_CHILDREN].filter( [data]=>thisFn );
 		// before leaving the 'Project' tag; add the missing files.
 		if(tagName=="Project"){
 			foreach(data.files as var filename,var marker){
@@ -123,7 +123,7 @@ w.addAction("Go!",fn(){
 			}
 		}
 		return true;	
-	},data);
+	});
 
 	if(data.numChanges==0){
 		out("No Changes!\n");
