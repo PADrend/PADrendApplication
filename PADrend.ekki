@@ -425,6 +425,48 @@ var targets = new Map; // the key is used for sorting!
 //	outln( vTarget.toDbgString() );
 }
 
+{ 
+	var vTarget = VirtualTargets.createNode("PADrendApp (dbg)");
+
+	vTarget += targets["EScript"];
+	vTarget += targets["Geometry"];
+	vTarget += targets["Util"];
+	vTarget += targets["Rendering"];
+	vTarget += targets["GUI"];
+	vTarget += targets["Sound"];
+	vTarget += targets["MinSG"];
+	vTarget += targets["E_Geometry"];
+	vTarget += targets["E_Util"];
+	vTarget += targets["E_Rendering"];
+	vTarget += targets["E_GUI"];
+	vTarget += targets["E_Sound"];
+	vTarget += targets["E_MinSG"];
+	vTarget += targets["~PADrendDbg"];
+
+	targets["PADrendApp(dbg)"] = vTarget;
+//	outln( vTarget.toDbgString() );
+}
+{ 
+	var vTarget = VirtualTargets.createNode("PADrendApp (release)");
+
+	vTarget += targets["EScript"];
+	vTarget += targets["Geometry"];
+	vTarget += targets["Util"];
+	vTarget += targets["Rendering"];
+	vTarget += targets["GUI"];
+	vTarget += targets["Sound"];
+	vTarget += targets["MinSG"];
+	vTarget += targets["E_Geometry"];
+	vTarget += targets["E_Util"];
+	vTarget += targets["E_Rendering"];
+	vTarget += targets["E_GUI"];
+	vTarget += targets["E_Sound"];
+	vTarget += targets["E_MinSG"];
+	vTarget += targets["~PADrend"];
+
+	targets["PADrendApp(release)"] = vTarget;
+//	outln( vTarget.toDbgString() );
+}
 //---------------------------
 
 var project = Projects.createNode( config.get('Project.name',"PADrend") );
