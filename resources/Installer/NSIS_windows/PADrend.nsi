@@ -5,7 +5,7 @@
 ;!define /date VERSION "%Y-%m-%d_%H-%M-%S"
 !define /date VERSION "%Y-%m-%d_%H-%M"
 
-!define BASE_DIR "..\..\.."
+!define BASE_DIR "..\..\..\.."
 
 ; The name of the installer
 Name "PADrend ${VERSION}"
@@ -64,7 +64,7 @@ Section "Install main exe"
 SectionIn 1 2 3
 SetOutPath $INSTDIR
 File /oname=PADrend.exe ${BASE_DIR}\PADrend.exe 
-File /oname=Help.txt ${BASE_DIR}\Help.txt
+File /oname=Help.txt ${BASE_DIR}\PADrend\doc\Help.txt
 SectionEnd
 ; ---
 Section "Cleanup old DLLs"
@@ -77,6 +77,13 @@ Section "Install DLLs"
 SectionIn 1 2 3
 SetOutPath $INSTDIR
 File ${BASE_DIR}\*.dll
+SectionEnd
+; ---
+Section "Install EScript/STD"
+SectionIn 1 2 3
+SetOutPath $INSTDIR\modules\EScript\Std
+File /r /x .git ${BASE_DIR}\modules\EScript\Std\*.escript
+
 SectionEnd
 ; ---
 Section "Store install path in registry"
@@ -100,18 +107,19 @@ Section "Cleanup old ext plugins"
 RMDir  $INSTDIR\extPlugins
 SectionEnd
 ; ---
-Section "Common Plugins (free)"
+Section "Common Plugins (MPL)"
 SectionIn 1 2 3
 SetOutPath $INSTDIR\plugins
-File /r /x .svn ${BASE_DIR}\plugins\*.*
+File /r /x .svn /x .git ${BASE_DIR}\plugins\*.*
 SectionEnd
 
 ; ---
 Section "ExtPlugins (proprietary)"
 SectionIn 2 3
 SetOutPath $INSTDIR\extPlugins
-File /r /x .svn /x Labyrinth ${BASE_DIR}\extPlugins\*.*
+File /r /x .svn /x Labyrinth /x .git ${BASE_DIR}\extPlugins\*.*
 SectionEnd
+
 
 SectionGroupEnd
 
@@ -120,10 +128,18 @@ SectionGroup "Sources"
 
 Section "Install Sources"
 SectionIn 3
-SetOutPath $INSTDIR\src
-File /r /x .Libs ${BASE_DIR}\src\*.h
-File /r /x .Libs ${BASE_DIR}\src\*.cpp
-File /r /x .Libs ${BASE_DIR}\src\*.txt
+SetOutPath $INSTDIR\modules
+File /r /x .Libs /x .git ${BASE_DIR}\modules\*.
+File /r /x .Libs /x .git ${BASE_DIR}\modules\*.html
+File /r /x .Libs /x .git ${BASE_DIR}\modules\*.rc
+File /r /x .Libs /x .git ${BASE_DIR}\modules\*.h
+File /r /x .Libs /x .git ${BASE_DIR}\modules\*.cpp
+File /r /x .Libs /x .git ${BASE_DIR}\modules\*.txt
+SetOutPath $INSTDIR\PADrend
+File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.
+File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.ico
+File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.cpp
+File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.txt
 SectionEnd
 
 SectionGroupEnd
@@ -165,11 +181,11 @@ SectionEnd
 
 ; ---
 
-Section "Install Resources"
-SectionIn 1 2 3
-SetOutPath $INSTDIR\resources
-File /r /x .svn /x *.exe ${BASE_DIR}\resources\*.*
-SectionEnd
+;Section "Install Resources"
+;SectionIn 1 2 3
+;SetOutPath $INSTDIR\resources
+;File /r /x .svn /x *.exe /x .git ${BASE_DIR}\resources\*.*
+;SectionEnd
 
 ; ---
 
