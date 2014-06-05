@@ -146,9 +146,9 @@ NodeEditor.registerConfigPanelProvider(InspectionState, fn(state, panel) {
 		GUI.SIZE			:	[GUI.WIDTH_FILL_ABS, 10, 0]
 	});
 	panel += renderingChannelsLabel;
-	state.renderingChannels.onDataChanged += (fn(label, data) {
+	state.renderingChannels.onDataChanged += [renderingChannelsLabel] => fn(label, data) {
 		label.setText(data);
-	}).bindFirstParams(renderingChannelsLabel);
+	};
 	state.renderingChannels("..."); // Force refresh on next set
 	panel++;
 });
