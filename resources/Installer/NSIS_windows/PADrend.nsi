@@ -82,7 +82,7 @@ SectionEnd
 Section "Install EScript/STD"
 SectionIn 1 2 3
 SetOutPath $INSTDIR\modules\EScript\Std
-File /r /x .git ${BASE_DIR}\modules\EScript\Std\*.escript
+File /r /x .git /x .svn ${BASE_DIR}\modules\EScript\Std\*.escript
 
 SectionEnd
 ; ---
@@ -110,7 +110,7 @@ SectionEnd
 Section "Common Plugins (MPL)"
 SectionIn 1 2 3
 SetOutPath $INSTDIR\plugins
-File /r /x .svn /x .git ${BASE_DIR}\plugins\*.*
+File /r /x .svn /x .git /x .svn ${BASE_DIR}\plugins\*.*
 SectionEnd
 
 ; ---
@@ -129,17 +129,17 @@ SectionGroup "Sources"
 Section "Install Sources"
 SectionIn 3
 SetOutPath $INSTDIR\modules
-File /r /x .Libs /x .git ${BASE_DIR}\modules\*.
-File /r /x .Libs /x .git ${BASE_DIR}\modules\*.html
-File /r /x .Libs /x .git ${BASE_DIR}\modules\*.rc
-File /r /x .Libs /x .git ${BASE_DIR}\modules\*.h
-File /r /x .Libs /x .git ${BASE_DIR}\modules\*.cpp
-File /r /x .Libs /x .git ${BASE_DIR}\modules\*.txt
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\modules\*.
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\modules\*.html
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\modules\*.rc
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\modules\*.h
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\modules\*.cpp
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\modules\*.txt
 SetOutPath $INSTDIR\PADrend
-File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.
-File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.ico
-File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.cpp
-File /r /x .Libs /x .git ${BASE_DIR}\PADrend\*.txt
+; File /r /x .Libs /x .git /x .svn ${BASE_DIR}\PADrend\*.
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\PADrend\*.ico
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\PADrend\*.cpp
+File /r /x .Libs /x .git /x .svn ${BASE_DIR}\PADrend\*.txt
 SectionEnd
 
 SectionGroupEnd
@@ -184,7 +184,7 @@ SectionEnd
 ;Section "Install Resources"
 ;SectionIn 1 2 3
 ;SetOutPath $INSTDIR\resources
-;File /r /x .svn /x *.exe /x .git ${BASE_DIR}\resources\*.*
+;File /r /x .svn /x *.exe /x .git /x .svn ${BASE_DIR}\resources\*.*
 ;SectionEnd
 
 ; ---
