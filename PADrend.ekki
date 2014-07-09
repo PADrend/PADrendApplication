@@ -1,12 +1,17 @@
-/* ----------------------------------------------------------------
-	This file is part of the EkkiEkkiKateng build tool.
-	Copyright (C) 2013 Claudius Jähn (claudiusj@users.berlios.de)
-	Licensed under the MIT License. See LICENSE file for details.
-	https://github.com/ClaudiusJ/EkkiEkkiKateng
-   ---------------------------------------------------------------- */
-outln("-"*40);
-outln("EkkiEkkiKateng! (EScript build system)");
-Runtime.setLoggingLevel(Runtime.LOG_PEDANTIC_WARNING);
+/*
+ * This file is part of the open source part of the
+ * Platform for Algorithm Development and Rendering (PADrend).
+ * Web page: http://www.padrend.de/
+ * Copyright (C) 2013-2014 Claudius Jähn <claudius@uni-paderborn.de>
+ * 
+ * PADrend consists of an open source part and a proprietary part.
+ * The open source part of PADrend is subject to the terms of the Mozilla
+ * Public License, v. 2.0. You should have received a copy of the MPL along
+ * with this library; see the file LICENSE. If not, you can obtain one at
+ * http://mozilla.org/MPL/2.0/.
+ */
+try{
+
 
 /*
 \todo 
@@ -15,28 +20,53 @@ Runtime.setLoggingLevel(Runtime.LOG_PEDANTIC_WARNING);
  - Minsg extension dependencies (minsg_add_dependencies)
 
 */
-loadOnce(IO.dirname(args[0])+"/Std/basics.escript"); // load Std lib
+Runtime.setLoggingLevel(Runtime.LOG_PEDANTIC_WARNING);
 
-static Set = Std.require('Std/Set');
-static Traits = Std.require('Std/Traits/basics');
+outln("-"*79);
+outln("This script creates a CodeBlocks project file for PADrend using EkkiEkkiKateng.");
+outln("PADrend: http://PADrend.de");
+outln("CodeBlocks: http://www.codeblocks.org");
+outln("EkkiEkkiKateng: https://github.com/ClaudiusJ/EkkiEkkiKateng");
+outln("-"*79);
 
-outln("Version: ",Std.require('EkkiEkkiKateng/Version') );
-assert(Std.require('EkkiEkkiKateng/Version') >= 0.1);
+outln("EScript version: ",EScript.VERSION_STRING);
 
-static CompilerOptions = Std.require('EkkiEkkiKateng/CompilerOptions');
-static ExternalLibs = Std.require('EkkiEkkiKateng/ExternalLibs');
-static Files = Std.require('EkkiEkkiKateng/Files');
-static FileUtils = Std.require('EkkiEkkiKateng/FileUtils');
-static LinkerOptions = Std.require('EkkiEkkiKateng/LinkerOptions');
-static Node = Std.require('EkkiEkkiKateng/Node');
-static Projects = Std.require('EkkiEkkiKateng/Projects');
-static Targets = Std.require('EkkiEkkiKateng/Targets');
-static VirtualTargets = Std.require('EkkiEkkiKateng/VirtualTargets');
+outln("Init EScript Std library...");
+static module;
+if(EScript.VERSION<701){ // pre-Egon
+	loadOnce(IO.dirname(args[0])+"/Std/basics.escript"); // load Std lib
+	module = Std.require;
+}else{
+	//addSearchPath(__DIR__ + "/..");
+	module = load( IO.dirname(args[0])+ "/Std/module.escript"); // load Std lib module loader
+	module.addSearchPath( IO.condensePath(IO.dirname(args[0])) );
+	module.addSearchPath( IO.condensePath(IO.dirname(args[0])+"\\..") ); // search path for EkkiEkkiKateng
+	//outln( IO.condensePath(IO.dirname(args[0])+"/..") );
+}
+
+static Set = module('Std/Set');
+static Traits = module('Std/Traits/basics');
+
+// ----
+
+outln("Init EkkiEkkiKateng library...");
+outln("EkkiEkkiKateng version: ",module('EkkiEkkiKateng/Version') );
+assert(module('EkkiEkkiKateng/Version') >= 0.1);
+
+static CompilerOptions = module('EkkiEkkiKateng/CompilerOptions');
+static ExternalLibs = module('EkkiEkkiKateng/ExternalLibs');
+static Files = module('EkkiEkkiKateng/Files');
+static FileUtils = module('EkkiEkkiKateng/FileUtils');
+static LinkerOptions = module('EkkiEkkiKateng/LinkerOptions');
+static Node = module('EkkiEkkiKateng/Node');
+static Projects = module('EkkiEkkiKateng/Projects');
+static Targets = module('EkkiEkkiKateng/Targets');
+static VirtualTargets = module('EkkiEkkiKateng/VirtualTargets');
 
 // --------------------------------
 // config
 
-var config = new (Std.require('Std/JSONDataStore'))(true);
+var config = new (module('Std/JSONDataStore'))(true);
 config.init( __FILE__.substr(0,__FILE__.rFind("."))+".ekki.txt", false);
 
 static folder_base = config.get('Project.Folders.base', IO.condensePath( (__DIR__+"/../").replaceAll('\\','/') ));
@@ -485,13 +515,16 @@ foreach( targets as var target)
 // ------------------------------------
 outln("-"*10);
 outln("Generating Code::Blocks project file...");
-var generator = Std.require('EkkiEkkiKateng/CodeBlocksGenerator');
+var generator = module('EkkiEkkiKateng/CodeBlocksGenerator');
 //generator.createProject( project );
 IO.saveTextFile(folder_base+"/PADrend.cbp", generator.createProject( project ));
 
 //print_r(project.toDbgString());
 
 // -----------------------------------
+}catch(e){
+	outln(e);
+}
 if(getOS()=="WINDOWS")
 	system('pause');
 	
