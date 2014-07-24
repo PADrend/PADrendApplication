@@ -102,5 +102,5 @@ registerExtension('NodeEditor_QueryAvailableStates', BudgetColorRenderer -> fn(s
 	if(MinSG.BudgetColorRenderer != this) {
 		return Extension.REMOVE_EXTENSION;
 	}
-	states[_printableName] = this -> fn() { return new this(); };
+	states["[scripted] "+_printableName] = this -> fn() { return new this(); };
 });

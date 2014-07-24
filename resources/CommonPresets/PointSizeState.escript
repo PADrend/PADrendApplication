@@ -46,5 +46,5 @@ registerExtension('NodeEditor_QueryAvailableStates', PointSizeState -> fn(states
 	if(MinSG.PointSizeState != this) {
 		return Extension.REMOVE_EXTENSION;
 	}
-	states[_printableName] = this -> fn() { return new this(); };
+	states["[scripted] "+_printableName] = this -> fn() { return new this(); };
 });
