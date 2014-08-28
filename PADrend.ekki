@@ -141,6 +141,7 @@ static libraries = {
 	'png'		: simpleFindAndCreateLibNode("png",		"","png.h",["libpng.dll.a"],searchFolders_includes,searchFolders_libs),
 	'pthread'	: createSystemLibNode("pthread", "pthread"),
 //	'pthread'	: void, // ????????????????????
+	'serial'	: simpleFindAndCreateLibNode("serial",	"","serial/serial.h",["libserial.a"],searchFolders_includes,searchFolders_libs),
 	'sqlite'	: simpleFindAndCreateLibNode("sqlite",	"","sqlite3.h",["libsqlite3.dll.a"],searchFolders_includes,searchFolders_libs),
 	'SDL2'		: simpleFindAndCreateLibNode("SDL2",	"SDL2","SDL.h",["libSDL2.dll.a"],searchFolders_includes,searchFolders_libs),
 	'SDL2_image': simpleFindAndCreateLibNode("SDL_image","SDL2","SDL_image.h",["libSDL2_image.dll.a"],searchFolders_includes,searchFolders_libs),
@@ -279,6 +280,7 @@ var targets = new Map; // the key is used for sorting!
 				'curl' : "UTIL_HAVE_LIB_CURL",
 				'freetype' : "UTIL_HAVE_LIB_FREETYPE",
 				'png' : "UTIL_HAVE_LIB_PNG",
+				'serial' : "UTIL_HAVE_LIB_SERIAL",
 				'sqlite' : "UTIL_HAVE_LIB_SQLITE",
 				'SDL2' : "UTIL_HAVE_LIB_SDL2",
 				'SDL2_image' : "UTIL_HAVE_LIB_SDL2_IMAGE",
