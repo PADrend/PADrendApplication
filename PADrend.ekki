@@ -413,7 +413,7 @@ var targets = new Map; // the key is used for sorting!
 	containerNode += targets["E_MinSG"];
 	
 	outln("Scanning for script files...");
-	foreach(FileUtils.scanFiles( folder_base, [".escript",".sfn",".vs",".fs",".ekki"] ) as var filename){
+	foreach(FileUtils.scanFiles( folder_base, [".escript",".sfn",".vs",".fs",".ekki",".info"] ) as var filename){
 		filename = filename.substr(folder_base.length());
 		containerNode += Files.createNode(filename);
 	}
