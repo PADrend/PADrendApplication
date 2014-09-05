@@ -170,7 +170,7 @@ var createModuleLibTarget = fn(String targetName,String moduleFolder,String libN
 	Targets.setType_StaticLib( targetNode );
 	CompilerOptions.addOptions( targetNode, [ "-g","-O3" ]);
 
-	foreach(FileUtils.scanFiles( folder_base+moduleFolder, [".cpp",".h",".escript",".txt",".info"] ) as var filename){ // ,".rc"
+	foreach(FileUtils.scanFiles( folder_base+moduleFolder, [".cpp",".h",".escript",".txt"] ) as var filename){ // ,".rc"
 		filename = filename.substr(folder_base.length());
 		if(!filename.contains("- Kopie")&&!filename.contains("/tests/")&&!filename.contains("/examples/")){
 			targetNode += Files.createNode(filename);
