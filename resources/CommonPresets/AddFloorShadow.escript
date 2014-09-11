@@ -39,7 +39,7 @@ builder.addVertex();
 builder.addQuad(0, 1, 2, 3);
 
 var geoNode = new MinSG.GeometryNode(builder.buildMesh());
-geoNode.setWorldPosition(new Geometry.Vec3(0, groundLevel, 0));
+geoNode.setWorldOrigin(new Geometry.Vec3(0, groundLevel, 0));
 
 var blendingState = new MinSG.BlendingState();
 blendingState.setBlendEquation(Rendering.BlendEquation.FUNC_ADD);

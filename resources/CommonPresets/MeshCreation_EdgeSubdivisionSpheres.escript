@@ -38,12 +38,12 @@ foreach(platonicSolids as var solid) {
 
 	foreach(spheres as var sphere) {
 		var wireSphere = sphere.clone();
-		wireSphere.setWorldPosition(position + new Geometry.Vec3(0, 3, 0));
+		wireSphere.setWorldOrigin(position + new Geometry.Vec3(0, 3, 0));
 		wireSphere.addState(polygonModeState.clone());
 		wireSphere.addState(cullFaceState.clone());
 		scene.addChild(wireSphere);
 
-		sphere.setWorldPosition(position);
+		sphere.setWorldOrigin(position);
 		scene.addChild(sphere);
 
 		position += new Geometry.Vec3(3, 0, 0);

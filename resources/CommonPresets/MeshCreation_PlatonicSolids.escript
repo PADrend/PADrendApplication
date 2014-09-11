@@ -31,12 +31,12 @@ polygonModeState.setMode(Rendering.PolygonModeParameters.LINE);
 
 foreach(platonicSolids as var solid) {
 	var wireSolid = solid.clone();
-	wireSolid.setWorldPosition(position + new Geometry.Vec3(0, 3, 0));
+	wireSolid.setWorldOrigin(position + new Geometry.Vec3(0, 3, 0));
 	wireSolid.addState(polygonModeState.clone());
 	wireSolid.addState(cullFaceState.clone());
 	scene.addChild(wireSolid);
 
-	solid.setWorldPosition(position);
+	solid.setWorldOrigin(position);
 	scene.addChild(solid);
 
 	position += new Geometry.Vec3(3, 0, 0);
