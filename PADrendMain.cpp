@@ -49,6 +49,7 @@
 #endif
 
 #include <Util/Util.h>
+#include <Util/LibRegistry.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -90,9 +91,10 @@ int main(int argc, char *argv[]) {
 	// -----------------------------------------------------------
 	// init Util
 	Util::init();
-
+	
 	// -----------------------------------------------------------
 	// init EScript
+	Util::LibRegistry::registerLibVersionString("EScript",ES_VERSION_STRING); 
 	EScript::init();
 	// init Libraries
 	EScript::initLibrary(E_Util::init);
