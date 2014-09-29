@@ -19,9 +19,7 @@
 	2010-03-26 Claudius
 */
 
-loadOnce("LibUtilExt/XML_Utils.escript");
-
-
+static XML_Utils = Std.require('LibUtilExt/XML_Utils');
 
 var w = gui.createPopupWindow(300,100,"Code::Blocks project updater");
 w.addOption({
@@ -90,14 +88,14 @@ w.addAction("Go!",fn(){
 	out("Scanned files: ",data.files.count(),"\n");
 
 	out("Parsing Code::Blocks project '",projectFile,"'\n");
-	var root = Util.loadXML(projectFile);
+	var root = XML_Utils.loadXML(projectFile);
 
 	out("Changes:\n");
-	root[Util.XML_CHILDREN].filter( [data] => fn(data,tag){
-		var tagName = tag[Util.XML_NAME];
+	root[XML_Utils.XML_CHILDREN].filter( [data] => fn(data,tag){
+		var tagName = tag[XML_Utils.XML_NAME];
 		// remove 'Units' with invalid files and mark valid files as found.
 		if(tagName == "Unit"){
-			var filename = tag[Util.XML_ATTRIBUTES]["filename"];
+			var filename = tag[XML_Utils.XML_ATTRIBUTES]["filename"];
 			if(data.files[filename]){
 				--data.files[filename]; // file already in project
 			}else{
@@ -107,17 +105,17 @@ w.addAction("Go!",fn(){
 			}
 		}
 		// execute recursively on children
-		if(tag[Util.XML_CHILDREN])
-			tag[Util.XML_CHILDREN].filter( [data]=>thisFn );
+		if(tag[XML_Utils.XML_CHILDREN])
+			tag[XML_Utils.XML_CHILDREN].filter( [data]=>thisFn );
 		// before leaving the 'Project' tag; add the missing files.
 		if(tagName=="Project"){
 			foreach(data.files as var filename,var marker){
 				if(marker>0){
 					out("+ ",filename,"\n");
 					++data.numChanges;
-					tag[Util.XML_CHILDREN]+={
-						Util.XML_NAME : "Unit",
-						Util.XML_ATTRIBUTES : { "filename" : filename}
+					tag[XML_Utils.XML_CHILDREN]+={
+						XML_Utils.XML_NAME : "Unit",
+						XML_Utils.XML_ATTRIBUTES : { "filename" : filename}
 					};
 				}
 			}
@@ -131,7 +129,7 @@ w.addAction("Go!",fn(){
 		out("Updating project file.\n");
 		// store a backup
 		Util.saveFile(projectFile+".bak",Util.loadFile(projectFile));
-		Util.saveXML(projectFile,root);
+		XML_Utils.saveXML(projectFile,root);
 	}
 });
 
