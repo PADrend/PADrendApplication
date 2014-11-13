@@ -156,7 +156,8 @@ MinSG.buildKDTree(scene, 0, 10);
 out(timer.getSeconds(), "sec)\n");
 
 out("saving scene (");timer.reset();
-GLOBALS.sceneManager.saveMinSGFile(exportDir + "Boeing.minsg",[scene]);
+
+MinSG.SceneManagement.saveMinSGFile(PADrend.getSceneManager(),exportDir + "Boeing.minsg",[scene]);
 out(timer.getSeconds(), "sec)\n");
 
 out("duration over all: ", mainTimer.getSeconds(), "sec\n");
