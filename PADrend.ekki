@@ -136,6 +136,7 @@ static libraries = {
 	'glew'		: simpleFindAndCreateLibNode("glew",	"","GL/glew.h",["libglew32.dll.a"],searchFolders_includes,searchFolders_libs),
 	'lpsolve'	: simpleFindAndCreateLibNode("lpsolve",	"lpsolve","lp_lib.h",["liblpsolve55.dll.a"],searchFolders_includes,searchFolders_libs),
 	'OpenAL'	: simpleFindAndCreateLibNode("OpenAL",	"","AL/al.h",["libOpenAL32.dll.a"],searchFolders_includes,searchFolders_libs),
+	'OpenCL'	: simpleFindAndCreateLibNode("OpenCL",	"","CL/cl.h",["libOpenCL.dll.a"],searchFolders_includes,searchFolders_libs),
 	'OpenCOLLADA': void, //! \todo 
 //		simpleFindAndCreateLibNode("OpenCOLLADA",	"opencollada/GeneratedSaxParser","GeneratedSaxParser",["libOpenAL32.dll.a"],searchFolders_includes,searchFolders_libs),
 	'png'		: simpleFindAndCreateLibNode("png",		"","png.h",["libpng.dll.a"],searchFolders_includes,searchFolders_libs),
@@ -245,14 +246,21 @@ var targets = new Map; // the key is used for sorting!
 	if(libraries['glew']){
 		target += libraries['glew'];
 		CompilerOptions.addDefine( target, "LIB_GLEW");
+		outln(" - LIB_GLEW");
 	}else {
 		Runtime.warn("LibGLEW not found!");
 	}
 	if(libraries['gl']){
 		target += libraries['gl'];
 		CompilerOptions.addDefine( target, "LIB_GL");
+		outln(" - LIB_GL");
 	}else {
 		Runtime.warn("LibGL not found!");
+	}
+	if(libraries['OpenCL']){
+		target += libraries['OpenCL'];
+		CompilerOptions.addDefine( target, "RENDERING_HAS_LIB_OPENCL");
+		outln(" - RENDERING_HAS_LIB_OPENCL");
 	}
 	targets["Rendering"] = target;
 }
