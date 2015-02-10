@@ -270,6 +270,11 @@ var targets = new Map; // the key is used for sorting!
 	var target = createModuleLibTarget("E_Rendering","modules/E_Rendering","libE_Rendering");
 	CompilerOptions.addSearchPath(target, "modules/EScript");
 	CompilerOptions.addSearchPath(target, "modules");
+	if(libraries['OpenCL']){
+		target += libraries['OpenCL'];
+		CompilerOptions.addDefine( target, "RENDERING_HAS_LIB_OPENCL");
+		outln(" - RENDERING_HAS_LIB_OPENCL");
+	}
 	targets["E_Rendering"] = target;
 }
 
