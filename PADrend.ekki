@@ -2,7 +2,7 @@
  * This file is part of the open source part of the
  * Platform for Algorithm Development and Rendering (PADrend).
  * Web page: http://www.padrend.de/
- * Copyright (C) 2013-2014 Claudius Jähn <claudius@uni-paderborn.de>
+ * Copyright (C) 2013-2015 Claudius Jähn <claudius@uni-paderborn.de>
  * 
  * PADrend consists of an open source part and a proprietary part.
  * The open source part of PADrend is subject to the terms of the Mozilla
@@ -31,6 +31,8 @@ outln("-"*79);
 
 outln("EScript version: ",EScript.VERSION_STRING);
 
+// ---------------------------------------------------------------------------
+
 outln("Init EScript Std library...");
 static module;
 if(EScript.VERSION<701){ // pre-Egon
@@ -47,7 +49,7 @@ if(EScript.VERSION<701){ // pre-Egon
 static Set = module('Std/Set');
 static Traits = module('Std/Traits/basics');
 
-// ----
+// ---------------------------------------------------------------------------
 
 outln("Init EkkiEkkiKateng library...");
 outln("EkkiEkkiKateng version: ",module('EkkiEkkiKateng/Version') );
@@ -75,14 +77,17 @@ static folder_objFiles = config.get('Project.Folders.objFiles', ".obj");
 static searchFolders_includes = config.get('Project.Folders.thirdPartyIncludes', [folder_base+"ThirdParty/x86_64-w64-mingw32/include"] );
 static searchFolders_libs = config.get('Project.Folders.thirdPartyLibs', [folder_base+"ThirdParty/x86_64-w64-mingw32/lib"]);
 
+static additionalLibs_util = config.get('Util.additionalLibs', ["gdi32","psapi"]);
+
+
 outln("Base folder: ",folder_base);
 
 // --------------------------
-// libs
+// ThirdParty libraries
 
 outln("-"*10);
 outln("ThirdParty libraries:");
-var simpleFindAndCreateLibNode = fn(String name, String includeSubFolder,String testHeader,Array libFiles, Array includeSearchPaths,Array libSearchPaths){
+static simpleFindAndCreateLibNode = fn(String name, String includeSubFolder,String testHeader,Array libFiles, Array includeSearchPaths,Array libSearchPaths){
 	var includePath;
 	foreach(includeSearchPaths as var p){
 		if(IO.isFile(p+"/"+includeSubFolder+"/"+testHeader)){
@@ -152,6 +157,18 @@ static libraries = {
 	'ZIP'		: simpleFindAndCreateLibNode("ZIP",		"","zip.h",["libZIP.dll.a"],searchFolders_includes,searchFolders_libs),
 	'zlib'		: simpleFindAndCreateLibNode("zlib",	"","zlib.h",["libz.dll.a"],searchFolders_includes,searchFolders_libs),
 };
+// libfreetype: if no .dll could be created, try the static version:
+if(!libraries['freetype']){
+	var lib = simpleFindAndCreateLibNode("freetype","freetype2","freetype/freetype.h",["libfreetype.a"],searchFolders_includes,searchFolders_libs);
+	if(lib){
+		outln("Info: [Freetype] No .dll.a found, using static lib. (Adds zlib to Util)");
+		libraries['freetype'] = lib;
+		if(!additionalLibs_util.contains('zlib'))
+			additionalLibs_util += 'zlib';
+	}
+	
+}
+
 foreach(libraries as var name,var lib)
 	outln(" - ",name.fillUp(30,"."),(lib?"found":"missing"));
 
@@ -285,9 +302,6 @@ var targets = new Map; // the key is used for sorting!
 	CompilerOptions.addSearchPath(e_target, "modules");
 	CompilerOptions.addSearchPath(e_target, "modules/EScript");
 			
-	LinkerOptions.addLibrary(target,"gdi32");
-	LinkerOptions.addLibrary(target,"psapi");
-	
 	foreach( {
 				'archive' : "UTIL_HAVE_LIB_ARCHIVE",
 				'curl' : "UTIL_HAVE_LIB_CURL",
@@ -314,6 +328,13 @@ var targets = new Map; // the key is used for sorting!
 		CompilerOptions.addDefine( target, libDefine);
 		CompilerOptions.addDefine( e_target, libDefine);
 		outln(" - ",libDefine);
+	}
+	foreach( additionalLibs_util as var libNameOrId){
+		if(libraries[libNameOrId]) { // not just a name but the id of a library node...
+			target += libraries[libNameOrId];
+		}else{ 
+			LinkerOptions.addLibrary(target,libNameOrId);
+		}
 	}
 	targets["Util"] = target;
 	targets["E_Util"] = e_target;
