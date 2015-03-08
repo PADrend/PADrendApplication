@@ -3,7 +3,7 @@
  * Platform for Algorithm Development and Rendering (PADrend).
  * Web page: http://www.padrend.de/
  * Copyright (C) 2008-2013 Benjamin Eikel <benjamin@eikel.org>
- * Copyright (C) 2007-2012 Claudius Jähn <claudius@uni-paderborn.de>
+ * Copyright (C) 2007-2015 Claudius Jähn <claudius@uni-paderborn.de>
  * Copyright (C) 2009-2011 Ralf Petring <ralf@petring.net>
  * 
  * PADrend consists of an open source part and a proprietary part.
@@ -122,26 +122,18 @@ int main(int argc, char *argv[]) {
 
 	// -----------------------------------------------------------
 
-	ERef<Runtime> rt(new Runtime());
+	ERef<Runtime> rt(new Runtime);
 
 	declareConstant(rt->getGlobals(), "args", Array::create(static_cast<std::size_t>(argc), argv));
 
 	std::string mainScript("./plugins/main.escript");
-	std::string mainConfig("./config.json");
 	for(int i = 0; i < argc; ++i) {
-		std::string arg(argv[i]);
-		if(arg.compare(0, 9, "--config=") == 0) {
-			mainConfig = arg.substr(9);
-		}
-		if(arg.compare(0, 9, "--script=") == 0) {
+		const std::string arg(argv[i]);
+		if(arg.compare(0, 9, "--script=") == 0)
 			mainScript = arg.substr(9);
-		}
 	}
 
-	ERef<String> config = String::create(mainConfig);
-
 	// pass some values to the script
-	declareConstant(rt->getGlobals(),"mainConfig", config.get());
 	declareConstant(rt->getGlobals(),"SIZE_OF_PTR", Number::create(sizeof(void*)));
 #ifdef NDEBUG
 	declareConstant(rt->getGlobals(),"BUILD_TYPE", String::create("release"));
@@ -153,12 +145,10 @@ int main(int argc, char *argv[]) {
 	std::pair<bool,ObjRef> result = EScript::loadAndExecute(*rt.get(),mainScript);
 
 	// --- output result
-	if (!result.second.isNull()) {
+	if(result.second)
 		std::cout << "\n\n --- "<<"\nResult: " << result.second.toString()<< std::endl;
-	}
 
 	rt=nullptr;
-	config = nullptr;
 //	Debug::showObjects();
 
 	if(result.first){
