@@ -14,7 +14,7 @@
  */
 var config = new ExtObject();
 var popup = gui.createPopupWindow(400,300, "Multiply Scene");
-config.copiesX := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.xCopies", 2);
+config.copiesX := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.xCopies", 2);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.LABEL : "Copies X",
@@ -22,7 +22,7 @@ popup.addOption({
 	GUI.RANGE_STEPS : 99,
 	GUI.DATA_WRAPPER : config.copiesX
 });
-config.copiesY := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.yCopies", 1);
+config.copiesY := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.yCopies", 1);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.LABEL : "Copies Y",
@@ -30,7 +30,7 @@ popup.addOption({
 	GUI.RANGE_STEPS : 99,
 	GUI.DATA_WRAPPER : config.copiesY
 });
-config.copiesZ := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.zCopies", 2);
+config.copiesZ := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.zCopies", 2);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.LABEL : "Copies Z",
@@ -38,14 +38,14 @@ popup.addOption({
 	GUI.RANGE_STEPS : 99,
 	GUI.DATA_WRAPPER : config.copiesZ
 });
-config.moveStates := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.moveStates", true);
+config.moveStates := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.moveStates", true);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_BOOL,
 	GUI.LABEL : "move states",
 	GUI.TOOLTIP : "move states from old scene root to new scene root",
 	GUI.DATA_WRAPPER : config.moveStates
 });
-config.multSpacing := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.multSpacing", 1);
+config.multSpacing := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.multSpacing", 1);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.RANGE : [0,2],
@@ -54,7 +54,7 @@ popup.addOption({
 	GUI.TOOLTIP : "adds space of x times clonesize between clones",
 	GUI.DATA_WRAPPER : config.multSpacing
 });
-config.addSpacing := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.addSpacing", 0);
+config.addSpacing := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.addSpacing", 0);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.RANGE : [0,100],
@@ -63,14 +63,14 @@ popup.addOption({
 	GUI.TOOLTIP : "adds space of x between clones",
 	GUI.DATA_WRAPPER : config.addSpacing
 });
-config.randomRotate := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.randomRotate", false);
+config.randomRotate := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.randomRotate", false);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_BOOL,
 	GUI.LABEL : "rotate randomly",
 	GUI.TOOLTIP : "rotates clones randomly around y-axis",
 	GUI.DATA_WRAPPER : config.randomRotate
 });
-config.randomMoveX := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.randomMoveX", 0);
+config.randomMoveX := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.randomMoveX", 0);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.RANGE : [0,100],
@@ -79,7 +79,7 @@ popup.addOption({
 	GUI.TOOLTIP : "move clones randomly along x-axis in [0,x]",
 	GUI.DATA_WRAPPER : config.randomMoveX
 });
-config.randomMoveY := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.randomMoveY", 0);
+config.randomMoveY := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.randomMoveY", 0);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.RANGE : [0,100],
@@ -88,7 +88,7 @@ popup.addOption({
 	GUI.TOOLTIP : "move clones randomly along y-axis in [0,y]",
 	GUI.DATA_WRAPPER : config.randomMoveY
 });
-config.randomMoveZ := DataWrapper.createFromConfig(PADrend.configCache, "Preset.MultiplyScene.randomMoveZ", 0);
+config.randomMoveZ := Std.DataWrapper.createFromEntry(PADrend.configCache, "Preset.MultiplyScene.randomMoveZ", 0);
 popup.addOption({
 	GUI.TYPE : GUI.TYPE_RANGE,
 	GUI.RANGE : [0,100],

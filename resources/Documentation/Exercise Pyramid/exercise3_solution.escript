@@ -60,9 +60,9 @@ pyramidCreator.create := fn(MinSG.GroupNode rootNode, MinSG.Node templateNode) {
 	}
 };
 
-pyramidCreator.numLevels := DataWrapper.createFromValue(10);
-pyramidCreator.topLevelColor := DataWrapper.createFromValue(new Util.Color4f(0.0, 0.0, 1.0, 1.0));
-pyramidCreator.bottomLevelColor := DataWrapper.createFromValue(new Util.Color4f(1.0, 0.0, 0.0, 1.0));
+pyramidCreator.numLevels := new Std.DataWrapper(10);
+pyramidCreator.topLevelColor := new Std.DataWrapper(new Util.Color4f(0.0, 0.0, 1.0, 1.0));
+pyramidCreator.bottomLevelColor := new Std.DataWrapper(new Util.Color4f(1.0, 0.0, 0.0, 1.0));
 
 var dialog = gui.createPopupWindow(300, 300);
 dialog.addOption({

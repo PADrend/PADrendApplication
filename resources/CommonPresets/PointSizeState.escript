@@ -17,7 +17,7 @@ MinSG.PointSizeState := new Type(MinSG.ScriptedState);
 var PointSizeState = MinSG.PointSizeState;
 PointSizeState._printableName @(override) ::= $PointSizeState;
 
-PointSizeState.pointSize @(init) := fn() { return DataWrapper.createFromValue(1.0); };
+PointSizeState.pointSize @(init) := fn() { return new Std.DataWrapper(1.0); };
 
 PointSizeState.doEnableState @(override) ::= fn(d*) {
 	renderingContext.pushAndSetPointParameters(new Rendering.PointParameters(pointSize()));

@@ -17,11 +17,11 @@ MinSG.BudgetColorRenderer := new Type(MinSG.ScriptedNodeRendererState);
 var BudgetColorRenderer = MinSG.BudgetColorRenderer;
 BudgetColorRenderer._printableName @(override) ::= $BudgetColorRenderer;
 
-BudgetColorRenderer.annotationAttribute @(init) := fn() { return DataWrapper.createFromValue("BudgetColor"); };
-BudgetColorRenderer.budgetRangeR @(init) := fn() { return DataWrapper.createFromValue(1.0); };
-BudgetColorRenderer.budgetRangeG @(init) := fn() { return DataWrapper.createFromValue(1.0); };
-BudgetColorRenderer.budgetRangeB @(init) := fn() { return DataWrapper.createFromValue(1.0); };
-BudgetColorRenderer.budgetRangeA @(init) := fn() { return DataWrapper.createFromValue(1.0); };
+BudgetColorRenderer.annotationAttribute @(init) := fn() { return new Std.DataWrapper("BudgetColor"); };
+BudgetColorRenderer.budgetRangeR @(init) := fn() { return new Std.DataWrapper(1.0); };
+BudgetColorRenderer.budgetRangeG @(init) := fn() { return new Std.DataWrapper(1.0); };
+BudgetColorRenderer.budgetRangeB @(init) := fn() { return new Std.DataWrapper(1.0); };
+BudgetColorRenderer.budgetRangeA @(init) := fn() { return new Std.DataWrapper(1.0); };
 
 BudgetColorRenderer.uniformState @(init) := MinSG.ShaderUniformState;
 

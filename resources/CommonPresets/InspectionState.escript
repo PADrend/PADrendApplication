@@ -18,18 +18,18 @@ var InspectionState = MinSG.InspectionState;
 InspectionState._printableName @(override) ::= $InspectionState;
 
 InspectionState.frameNumberCounter @(init) := fn() { return PADrend.frameStatistics.getCounterForDescription("frame number"); };
-InspectionState.frameNumber @(init) := fn() { return DataWrapper.createFromValue(0); };
-InspectionState.renderingChannel @(init) := fn() { return DataWrapper.createFromValue(""); };
-InspectionState.renderingFlags @(init) := fn() { return DataWrapper.createFromValue(0); };
-InspectionState.renderingBOUNDINGBOXES @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingNOGEOMETRY @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingFRUSTUMCULLING @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingSHOWMETAOBJECTS @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingSHOWCOORDSYSTEM @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingUSEWORLDMATRIX @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingNOSTATES @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingSKIPRENDERER @(init) := fn() { return DataWrapper.createFromValue(false); };
-InspectionState.renderingChannels @(init) := fn() { return DataWrapper.createFromValue(""); };
+InspectionState.frameNumber @(init) := fn() { return new Std.DataWrapper(0); };
+InspectionState.renderingChannel @(init) := fn() { return new Std.DataWrapper(""); };
+InspectionState.renderingFlags @(init) := fn() { return new Std.DataWrapper(0); };
+InspectionState.renderingBOUNDINGBOXES @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingNOGEOMETRY @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingFRUSTUMCULLING @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingSHOWMETAOBJECTS @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingSHOWCOORDSYSTEM @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingUSEWORLDMATRIX @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingNOSTATES @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingSKIPRENDERER @(init) := fn() { return new Std.DataWrapper(false); };
+InspectionState.renderingChannels @(init) := fn() { return new Std.DataWrapper(""); };
 
 InspectionState.doEnableState @(override) ::= fn(node, rp) {
 	frameNumber(PADrend.frameStatistics.getValue(frameNumberCounter));

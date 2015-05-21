@@ -53,7 +53,7 @@ pyramidCreator.create := fn(MinSG.GroupNode rootNode, MinSG.Node templateNode) {
 	}
 };
 
-pyramidCreator.numLevels := DataWrapper.createFromValue(10);
+pyramidCreator.numLevels := new Std.DataWrapper(10);
 
 var dialog = gui.createPopupWindow(300, 100);
 dialog.addOption({
