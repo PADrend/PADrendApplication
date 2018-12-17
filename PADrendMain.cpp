@@ -50,6 +50,8 @@
 
 #include <Util/Util.h>
 #include <Util/LibRegistry.h>
+#include <Util/IO/FileLocator.h>
+#include <Util/IO/FileName.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -132,7 +134,7 @@ int main(int argc, char *argv[]) {
 		if(arg.compare(0, 9, "--script=") == 0)
 			mainScript = arg.substr(9);
 	}
-
+	
 	// pass some values to the script
 	declareConstant(rt->getGlobals(),"SIZE_OF_PTR", Number::create(sizeof(void*)));
 #ifdef NDEBUG
@@ -141,8 +143,29 @@ int main(int argc, char *argv[]) {
 	declareConstant(rt->getGlobals(),"BUILD_TYPE", String::create("debug"));
 #endif
 
+	Util::FileLocator locator;
+	locator.addSearchPath("./");
+	locator.addSearchPath("./share/PADrend/");
+	#if defined(__linux__)	
+		locator.addSearchPath("/usr/local/share/PADrend/");
+		locator.addSearchPath("/usr/share/PADrend/");	
+	#elif defined(_WIN32)	
+		locator.addSearchPath("C:/Program Files/PADrendComplete/share/PADrend/");
+		locator.addSearchPath("C:/Program Files (x86)/PADrendComplete/share/PADrend/");
+		locator.addSearchPath("C:/Program Files/PADrend/share/PADrend/");
+		locator.addSearchPath("C:/Program Files (x86)/PADrend/share/PADrend/");
+	#elif defined(__APPLE__)
+		// Where does apple store applications by default?
+	#endif
+	auto file = locator.locateFile(Util::FileName(mainScript));
+	
+	if(!file.first) {
+		std::cout <<"ERROR: Could not locate 'main.escript'" << std::endl;
+		return EXIT_FAILURE;
+	}
+
 	// --- Load and execute script
-	std::pair<bool,ObjRef> result = EScript::loadAndExecute(*rt.get(),mainScript);
+	std::pair<bool,ObjRef> result = EScript::loadAndExecute(*rt.get(), file.second.getPath());
 
 	// --- output result
 	if(result.second)
