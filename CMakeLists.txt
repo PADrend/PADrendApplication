@@ -21,7 +21,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(PADREND_DESCRIPTION "Platform for Algorithm Development and Rendering (PADrend)")
-set(PADREND_AUTHORS "Benjamin Eikel; Claudius Jaehn; Ralf Petring")
+set(PADREND_AUTHORS "Benjamin Eikel; Claudius Jaehn; Ralf Petring; Sascha Brandt")
 
 # Set up install directories
 include(GNUInstallDirs)
@@ -36,6 +36,7 @@ add_executable(PADrend
 	${PADREND_RESOURCE_FILE}
 )
 
+set_target_properties(PADrend PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}")
 if(WIN32)
 	set_property(TARGET PADrend APPEND PROPERTY INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/resources/Windows")
 endif()
