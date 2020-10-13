@@ -15,7 +15,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # Packaging
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP ON)
 include(InstallRequiredSystemLibraries)
-if(WIN32)
+if(WIN32 AND NOT MSVC)
 	install(FILES ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS} DESTINATION bin COMPONENT runtimelibraries)
 	# Search the "libgcc_s_sjlj-1.dll" file
 	execute_process(
