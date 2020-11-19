@@ -145,11 +145,13 @@ int main(int argc, char *argv[]) {
 
 	Util::FileLocator locator;
 	locator.addSearchPath("./");
+	locator.addSearchPath("./../"); // PADrend is in ./build
 	locator.addSearchPath("./share/PADrend/");
 	#if defined(__linux__)	
 		locator.addSearchPath("/usr/local/share/PADrend/");
 		locator.addSearchPath("/usr/share/PADrend/");	
 	#elif defined(_WIN32)	
+		locator.addSearchPath("./../../"); // PADrend is in, e.g., ./build/Release
 		locator.addSearchPath("C:/Program Files/PADrendComplete/share/PADrend/");
 		locator.addSearchPath("C:/Program Files (x86)/PADrendComplete/share/PADrend/");
 		locator.addSearchPath("C:/Program Files/PADrend/share/PADrend/");
