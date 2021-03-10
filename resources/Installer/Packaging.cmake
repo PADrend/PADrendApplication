@@ -10,7 +10,7 @@
 # with this library; see the file LICENSE. If not, you can obtain one at
 # http://mozilla.org/MPL/2.0/.
 #
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 3.1.0)
 
 # Packaging
 set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP ON)
