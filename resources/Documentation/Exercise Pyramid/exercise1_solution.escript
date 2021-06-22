@@ -1,7 +1,11 @@
 // Solution to Exercise 1
 
-var rectangleMesh = 
-		Rendering.MeshBuilder.createRectangle(1.0, 1.0);
+var vd = new Rendering.VertexDescription;
+vd.appendPosition3D();
+vd.appendNormalFloat();
+vd.appendColorRGBAByte();
+vd.appendTexCoord();
+var rectangleMesh = Rendering.createRectangle(vd, 1.0, 1.0);
 var geoNode = new MinSG.GeometryNode();
 geoNode.setMesh(rectangleMesh);
 
